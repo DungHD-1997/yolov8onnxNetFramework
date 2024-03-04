@@ -146,10 +146,10 @@ namespace Yolov8_NetFW
                 Directory.CreateDirectory(output);
             string img_path = @"../../assets/input/sports.jpg";
             string full_path = Path.GetFullPath(img_path);
-            string model_path = "../../models/yolov8s-pose.onnx";
-            PoseDemo(img_path, model_path).GetAwaiter().GetResult();
+            string model_path = @"C:\Code\yolov8onnxNetFramework\Yolov8_NetFW\Yolov8_NetFW\models\yolov8s.onnx";// "../../models/yolov8s.onnx";
+            //PoseDemo(img_path, model_path).GetAwaiter().GetResult();
 
-            //DetectDemo(img_path, model_path).GetAwaiter().GetResult(); 
+            DetectDemo(img_path, model_path).GetAwaiter().GetResult(); 
 
             //SegmentDemo(img_path, model_path).GetAwaiter().GetResult();
             //string[] img_cls = { @"C:\Code\Yolov8_NetFW\Yolov8_NetFW\assets\input\toaster.jpg" };

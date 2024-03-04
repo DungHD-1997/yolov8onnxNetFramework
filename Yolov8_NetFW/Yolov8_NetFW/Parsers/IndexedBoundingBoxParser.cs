@@ -98,6 +98,37 @@ namespace Yolov8_NetFW.Parsers
                 }
             });
 
+            //for(int i = 0;i < output.Dimensions[2]; i++)
+            //{
+            //    for (int j = 0; j < metadata.Classes.Count; j++)
+            //    {
+            //        var confidence = output[0, j + 4, i];
+
+            //        if (confidence <= parameters.Confidence)
+            //            continue;
+
+            //        var x = output[0, 0, i];
+            //        var y = output[0, 1, i];
+            //        var w = output[0, 2, i];
+            //        var h = output[0, 3, i];
+
+            //        var xMin = (int)((x - w / 2 - xPadding) * xRatio);
+            //        var yMin = (int)((y - h / 2 - yPadding) * yRatio);
+            //        var xMax = (int)((x + w / 2 - xPadding) * xRatio);
+            //        var yMax = (int)((y + h / 2 - yPadding) * yRatio);
+
+            //        xMin = Clamp(xMin, 0, originSize.Width);
+            //        yMin = Clamp(yMin, 0, originSize.Height);
+            //        xMax = Clamp(xMax, 0, originSize.Width);
+            //        yMax = Clamp(yMax, 0, originSize.Height);
+
+            //        var bounds = Rectangle.FromLTRB(xMin, yMin, xMax, yMax);
+            //        var name = metadata.Classes[j];
+
+            //        boxes[i] = new IndexedBoundingBox(i, name, bounds, confidence);
+            //    }
+            //}
+
             var selected = NonMaxSuppressionHelper.Suppress(boxes.Where(x => x.IsEmpty == false).ToList(), _parameters.IoU);
 
             return selected;
