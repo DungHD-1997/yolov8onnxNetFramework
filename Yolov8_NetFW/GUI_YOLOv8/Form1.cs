@@ -234,6 +234,43 @@ namespace GUI_YOLOv8
             origin.Dispose(); ploted.Dispose();
             Console.WriteLine();
         }
+        private SixLabors.ImageSharp.Image detect(string model_path, SixLabors.ImageSharp.Image image)
+        {
+
+            Console.WriteLine();
+            Console.WriteLine("================ DETECT DEMO ================");
+            Console.WriteLine();
+
+            Console.WriteLine("Loading model...");
+            var predictor = new YoloV8(model_path);
+
+            //Console.WriteLine("Working... ({0})", image_path);
+            var result = predictor.Detect(image);
+            predictor.Dispose();
+
+            Console.WriteLine();
+
+            Console.WriteLine($"Result: {result}");
+            Console.WriteLine($"Speed: {result.Speed}");
+
+            Console.WriteLine();
+
+            Console.WriteLine("Plotting and saving...");
+            //var origin = SixLabors.ImageSharp.Image.Load(image_path);
+
+            var ploted = result.PlotImage(image);
+            //string path_save_parent = Directory.GetParent(image_path).FullName;
+            //var pathToSave = Path.Combine(path_save_parent, "result_" + Path.GetFileName(image_path));
+            //var fullname = Path.GetFullPath(pathToSave);
+            //ploted.Save(pathToSave);
+            //var resize = get_size(ploted.Width, ploted.Height);
+            //ploted.Mutate(x => x.Resize(resize.Width, resize.Height));
+            //pictureBox2.Image = ImageSharpToBitmap(ploted);
+            //origin.Dispose(); 
+            //ploted.Dispose();
+            return ploted;
+            //Console.WriteLine();
+        }
         private void segment(string model_path, string image_path)
         {
 
@@ -434,6 +471,7 @@ namespace GUI_YOLOv8
                         byte[] imagedatabytes = new byte[inbyte]; 
                         // sua ham detect argument is image and return image de load len tren picture box
                         var new_img = SixLabors.ImageSharp.Image.Load(imagedatabytes);
+                        var rs_img = detect(new_img);
                         CvInvoke.Resize(m, m, resize);
                         pictureBox1.Image = m.ToBitmap();
                         pictureBox2.Image = m.ToBitmap();
