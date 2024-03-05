@@ -21,6 +21,8 @@ using SixLabors.ImageSharp.Formats.Bmp;
 using SixLabors.ImageSharp.Processing;
 using Emgu.CV.Plot;
 using System.Security.Cryptography;
+using static System.Net.Mime.MediaTypeNames;
+//using Microsoft.ML.OnnxRuntime.Tensors;
 
 namespace GUI_YOLOv8
 {
@@ -28,9 +30,43 @@ namespace GUI_YOLOv8
     {
         VideoCapture capture;
         bool pause = false;
+        static string model_path_dect = @"C:\Code\yolov8onnxNetFramework\Yolov8_NetFW\Yolov8_NetFW\models\yolov8s.onnx";
+        static YoloV8 predictor_dect = new YoloV8(model_path_dect);
+
+        static string model_path_pose = @"C:\Code\yolov8onnxNetFramework\Yolov8_NetFW\Yolov8_NetFW\models\yolov8s-pose.onnx";
+        static YoloV8 predictor_pose = new YoloV8(model_path_pose);
+
+        static string model_path_seg = @"C:\Code\yolov8onnxNetFramework\Yolov8_NetFW\Yolov8_NetFW\models\yolov8s-seg.onnx";
+        static YoloV8 predictor_seg = new YoloV8(model_path_seg);
         public Form1()
         {
             InitializeComponent();
+
+
+                        //string image_path = @"C:\Code\YOLOv8-GUI\data\bus.jpg";
+                        //Console.WriteLine("Working... ({0})", image_path);
+                        //var result = predictor_dect.Detect(image_path);
+                        //predictor_dect.Dispose();
+
+                        //Console.WriteLine();
+
+                        //Console.WriteLine($"Result: {result}");
+                        //Console.WriteLine($"Speed: {result.Speed}");
+
+                        //Console.WriteLine();
+
+                        //Console.WriteLine("Plotting and saving...");
+                        //var origin = SixLabors.ImageSharp.Image.Load(image_path);
+
+                        //var ploted = result.PlotImage(origin);
+                        ////string path_save_parent = Directory.GetParent(image_path).FullName;
+                        ////var pathToSave = Path.Combine(path_save_parent, "result_" + Path.GetFileName(image_path));
+                        ////var fullname = Path.GetFullPath(pathToSave);
+                        ////ploted.Save(pathToSave);
+                        //var resize = get_size(ploted.Width, ploted.Height);
+                        //ploted.Mutate(x => x.Resize(resize.Width, resize.Height));
+                        ////pictureBox2.Image = ImageSharpToBitmap(ploted);
+                        //origin.Dispose(); ploted.Dispose();
         }
 
         //private void button1_Click(object sender, EventArgs e)
@@ -242,8 +278,8 @@ namespace GUI_YOLOv8
             Console.WriteLine();
 
             Console.WriteLine("Loading model...");
-            var predictor = new YoloV8(model_path);
 
+            var predictor = new YoloV8(model_path);
             //Console.WriteLine("Working... ({0})", image_path);
             var result = predictor.Detect(image);
             predictor.Dispose();
@@ -263,14 +299,52 @@ namespace GUI_YOLOv8
             //var pathToSave = Path.Combine(path_save_parent, "result_" + Path.GetFileName(image_path));
             //var fullname = Path.GetFullPath(pathToSave);
             //ploted.Save(pathToSave);
-            //var resize = get_size(ploted.Width, ploted.Height);
-            //ploted.Mutate(x => x.Resize(resize.Width, resize.Height));
+            var resize = get_size(ploted.Width, ploted.Height);
+            ploted.Mutate(x => x.Resize(resize.Width, resize.Height));
             //pictureBox2.Image = ImageSharpToBitmap(ploted);
             //origin.Dispose(); 
             //ploted.Dispose();
             return ploted;
             //Console.WriteLine();
         }
+        private SixLabors.ImageSharp.Image detect(SixLabors.ImageSharp.Image image)
+        {
+
+            Console.WriteLine();
+            Console.WriteLine("================ DETECT DEMO ================");
+            Console.WriteLine();
+
+            Console.WriteLine("Loading model...");
+
+            //var predictor = new YoloV8(model_path);
+            //Console.WriteLine("Working... ({0})", image_path);
+            var result = predictor_dect.Detect(image);
+            //model.Dispose();
+
+            Console.WriteLine();
+
+            Console.WriteLine($"Result: {result}");
+            Console.WriteLine($"Speed: {result.Speed}");
+
+            Console.WriteLine();
+
+            Console.WriteLine("Plotting and saving...");
+            //var origin = SixLabors.ImageSharp.Image.Load(image_path);
+
+            var ploted = result.PlotImage(image);
+            //string path_save_parent = Directory.GetParent(image_path).FullName;
+            //var pathToSave = Path.Combine(path_save_parent, "result_" + Path.GetFileName(image_path));
+            //var fullname = Path.GetFullPath(pathToSave);
+            //ploted.Save(pathToSave);
+            var resize = get_size(ploted.Width, ploted.Height);
+            ploted.Mutate(x => x.Resize(resize.Width, resize.Height));
+            //pictureBox2.Image = ImageSharpToBitmap(ploted);
+            //origin.Dispose(); 
+            //ploted.Dispose();
+            return ploted;
+            //Console.WriteLine();
+        }
+        
         private void segment(string model_path, string image_path)
         {
 
@@ -340,6 +414,78 @@ namespace GUI_YOLOv8
             pictureBox2.Image = ImageSharpToBitmap(ploted);
             origin.Dispose(); ploted.Dispose();
             Console.WriteLine();
+        }
+        private SixLabors.ImageSharp.Image pose(string model_path, SixLabors.ImageSharp.Image image)
+        {
+
+            Console.WriteLine();
+            Console.WriteLine("================ POSE DEMO ================");
+            Console.WriteLine();
+
+            Console.WriteLine("Loading model...");
+            var predictor = new YoloV8(model_path);
+
+            //Console.WriteLine("Working... ({0})", image_path);
+            var result = predictor.Pose(image);
+            predictor.Dispose();
+
+            Console.WriteLine();
+
+            Console.WriteLine($"Result: {result}");
+            Console.WriteLine($"Speed: {result.Speed}");
+
+            Console.WriteLine();
+
+            Console.WriteLine("Plotting and saving...");
+            //var origin = SixLabors.ImageSharp.Image.Load(image_path);
+
+            var ploted = result.PlotImage(image);
+            //string path_save_parent = Directory.GetParent(image_path).FullName;
+            //var pathToSave = Path.Combine(path_save_parent, "result_" + Path.GetFileName(image_path));
+            //var fullname = Path.GetFullPath(pathToSave);
+            //ploted.Save(pathToSave);
+            var resize = get_size(image.Width, image.Height);
+            ploted.Mutate(x => x.Resize(resize.Width, resize.Height));
+            //pictureBox2.Image = ImageSharpToBitmap(ploted);
+            image.Dispose(); //ploted.Dispose();
+            Console.WriteLine();
+            return ploted;
+        }
+        private SixLabors.ImageSharp.Image segment(string model_path, SixLabors.ImageSharp.Image image)
+        {
+
+            Console.WriteLine();
+            Console.WriteLine("================ POSE DEMO ================");
+            Console.WriteLine();
+
+            Console.WriteLine("Loading model...");
+            var predictor = new YoloV8(model_path);
+
+            //Console.WriteLine("Working... ({0})", image_path);
+            var result = predictor.Segment(image);
+            predictor.Dispose();
+
+            Console.WriteLine();
+
+            Console.WriteLine($"Result: {result}");
+            Console.WriteLine($"Speed: {result.Speed}");
+
+            Console.WriteLine();
+
+            Console.WriteLine("Plotting and saving...");
+            //var origin = SixLabors.ImageSharp.Image.Load(image_path);
+
+            var ploted = result.PlotImage(image);
+            //string path_save_parent = Directory.GetParent(image_path).FullName;
+            //var pathToSave = Path.Combine(path_save_parent, "result_" + Path.GetFileName(image_path));
+            //var fullname = Path.GetFullPath(pathToSave);
+            //ploted.Save(pathToSave);
+            var resize = get_size(image.Width, image.Height);
+            ploted.Mutate(x => x.Resize(resize.Width, resize.Height));
+            //pictureBox2.Image = ImageSharpToBitmap(ploted);
+            image.Dispose(); //ploted.Dispose();
+            Console.WriteLine();
+            return ploted;
         }
         public static Bitmap ImageSharpToBitmap(SixLabors.ImageSharp.Image image)
         {
@@ -431,6 +577,8 @@ namespace GUI_YOLOv8
                 capture = new VideoCapture(openFileDialog.FileName);
                 Mat m = new Mat();
                 capture.Read(m);
+                var resize = get_size(m.Width, m.Height);
+                CvInvoke.Resize(m, m, resize);
                 pictureBox1.Image = m.ToBitmap();
             }
         }
@@ -444,7 +592,12 @@ namespace GUI_YOLOv8
         {
             pause = !pause;
         }
-
+        public static byte[] ImageToByte(System.Drawing.Image img)
+        {
+            ImageConverter converter = new ImageConverter();
+            return (byte[])converter.ConvertTo(img, typeof(byte[]));    
+        }
+        //YoloV8 predictor = new YoloV8(@"C:\Code\yolov8onnxNetFramework\Yolov8_NetFW\Yolov8_NetFW\models\yolov8s.onnx");
         private async void ts_video_play_Click(object sender, EventArgs e)
         {
             if (capture == null)
@@ -454,6 +607,7 @@ namespace GUI_YOLOv8
 
             try
             {
+                //var model_path = @"C:\Code\yolov8onnxNetFramework\Yolov8_NetFW\Yolov8_NetFW\models\yolov8s.onnx";
 
                 while (!pause)
                 {
@@ -464,19 +618,48 @@ namespace GUI_YOLOv8
 
                     if (!m.IsEmpty)
                     {
+                        SixLabors.ImageSharp.Image rs_img;
                         //CvInvoke.Resize(img_org,img_org,resize);
                         var bitmap = m.ToBitmap();
-                        var size = bitmap.Size;
-                        int inbyte = (int)size.Width * (int)size.Height;
-                        byte[] imagedatabytes = new byte[inbyte]; 
-                        // sua ham detect argument is image and return image de load len tren picture box
+                        var imagedatabytes = ImageToByte(bitmap);
+                        //// sua ham detect argument is image and return image de load len tren picture box
                         var new_img = SixLabors.ImageSharp.Image.Load(imagedatabytes);
-                        var rs_img = detect(new_img);
+                        if (rb_dt.Checked)
+                        {
+                            //string model_path = @"C:\Code\yolov8onnxNetFramework\Yolov8_NetFW\Yolov8_NetFW\models\yolov8s.onnx";
+                            rs_img = detect(new_img);
+                            pictureBox2.Image = ImageSharpToBitmap(rs_img);
+                            rs_img.Dispose();
+
+                            
+                        }
+                        else if (rb_sm.Checked)
+                        {
+                            string model_path = @"C:\Code\yolov8onnxNetFramework\Yolov8_NetFW\Yolov8_NetFW\models\yolov8s-seg.onnx";
+                            rs_img = segment(model_path, new_img);
+                            pictureBox2.Image = ImageSharpToBitmap(rs_img);
+                            rs_img.Dispose();
+
+                        }
+                        else if (rb_pose.Checked)
+                        {
+                            string model_path = @"C:\Code\yolov8onnxNetFramework\Yolov8_NetFW\Yolov8_NetFW\models\yolov8s-pose.onnx";
+                            rs_img = pose(model_path, new_img);
+                            pictureBox2.Image = ImageSharpToBitmap(rs_img);
+                            rs_img.Dispose();
+
+                        }
+                        else
+                        {
+                            MessageBox.Show("Please choose mode Detect or Segment or Pose!");
+                            return;
+                        }
+                        //var rs_img = detect(model_path, new_img);
                         CvInvoke.Resize(m, m, resize);
                         pictureBox1.Image = m.ToBitmap();
-                        pictureBox2.Image = m.ToBitmap();
-
+                        bitmap.Dispose();
                         m.Dispose();
+                        new_img.Dispose();
                         double fps = capture.Get(Emgu.CV.CvEnum.CapProp.Fps);
                         await Task.Delay(1000 / Convert.ToInt32(fps));
                     }
