@@ -173,7 +173,7 @@ namespace Yolov8_NetFW.Plotting
                             mask[x, y] = color;
                     }
                 }
-                mask.Save("plot_defalt.jpg");
+                //mask.Save("plot_defalt.jpg");
                 masksLayer.Mutate(x => x.DrawImage(mask, box.Bounds.Location, 1F));
 
                 if (options.ContoursThickness > 0F)

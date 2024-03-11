@@ -26,6 +26,12 @@ using Yolov8_NetFW.Data;
 using System.Diagnostics;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Rapid;
+using static Emgu.Util.Platform;
+using Emgu.CV.Util;
+using SixLabors.Fonts;
+using SixLabors.ImageSharp.Drawing;
+using SixLabors.ImageSharp.PixelFormats;
+using Yolov8_NetFW.Selectors;
 //using Microsoft.ML.OnnxRuntime.Tensors;
 
 namespace GUI_YOLOv8
@@ -34,80 +40,11 @@ namespace GUI_YOLOv8
     {
         VideoCapture capture;
         bool pause = false;
-        //static string model_path_dect = @"C:\Code\yolov8onnxNetFramework\Yolov8_NetFW\Yolov8_NetFW\models\yolov8s.onnx";
-        //static YoloV8 predictor_dect = new YoloV8(model_path_dect);
-
-        //static string model_path_pose = @"C:\Code\yolov8onnxNetFramework\Yolov8_NetFW\Yolov8_NetFW\models\yolov8s-pose.onnx";
-        //static YoloV8 predictor_pose = new YoloV8(model_path_pose);
-
-        //static string model_path_seg = @"C:\Code\yolov8onnxNetFramework\Yolov8_NetFW\Yolov8_NetFW\models\yolov8s-seg.onnx";
-        //static YoloV8 predictor_seg = new YoloV8(model_path_seg);
         public Form1()
         {
             InitializeComponent();
         }
 
-        //private void button1_Click(object sender, EventArgs e)
-        //{
-        //    using (OpenFileDialog openFileDialog = new OpenFileDialog())
-        //    {
-        //        openFileDialog.Filter = "Image Files (*.jpg;*.jpeg;*.png;*.gif;*.bmp)|*.jpg;*.jpeg;*.png;*.gif;*.bmp|All files (*.*)|*.*";
-        //        openFileDialog.Multiselect = false;
-
-        //        if (openFileDialog.ShowDialog() == DialogResult.OK)
-        //        {
-        //            string selectedFile = openFileDialog.FileName;
-
-        //            try
-        //            {
-
-        //                Bitmap org = new Bitmap(openFileDialog.FileName);
-
-        //                var output = "../../assets/output";
-        //                if (Directory.Exists(output) == false)
-        //                    Directory.CreateDirectory(output);
-        //                string img_path = @"../../assets/input/sports.jpg";
-        //                string full_path = Path.GetFullPath(img_path);
-        //                string model_path = @"C:\Code\yolov8onnxNetFramework\Yolov8_NetFW\Yolov8_NetFW\models\yolov8s.onnx";
-        //                Console.WriteLine();
-        //                Console.WriteLine("================ CLASSIFICATION DEMO ================");
-        //                Console.WriteLine();
-
-        //                Console.WriteLine("Loading model...");
-        //                var predictor = new YoloV8(model_path);
-
-        //                Console.WriteLine("Working... ({0})", openFileDialog.FileName);
-        //                var result = predictor.Detect(openFileDialog.FileName);
-        //                predictor.Dispose();
-
-        //                Console.WriteLine();
-
-        //                Console.WriteLine($"Result: {result}");
-        //                Console.WriteLine($"Speed: {result.Speed}");
-
-        //                Console.WriteLine();
-
-        //                Console.WriteLine("Plotting and saving...");
-        //                var origin = SixLabors.ImageSharp.Image.Load(openFileDialog.FileName);
-
-        //                var ploted = result.PlotImage(origin);
-
-        //                var pathToSave = Path.Combine(output, Path.GetFileName(openFileDialog.FileName));
-        //                var fullname = Path.GetFullPath(pathToSave);
-        //                pictureBox1.Image = org;
-        //                ploted.Save(pathToSave);
-        //                origin.Dispose(); ploted.Dispose();
-        //                Console.WriteLine();
-
-
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                MessageBox.Show($"Error loading image: {ex.Message}");
-        //            }
-        //        }
-        //    }
-        //}
 
         private void rb_cls_CheckedChanged(object sender, EventArgs e)
         {
@@ -204,8 +141,8 @@ namespace GUI_YOLOv8
 
             var ploted = result.PlotImage(origin);
             string path_save_parent = Directory.GetParent(image_path).FullName;
-            var pathToSave = Path.Combine(path_save_parent, "result_" + Path.GetFileName(image_path));
-            var fullname = Path.GetFullPath(pathToSave);
+            var pathToSave = System.IO.Path.Combine(path_save_parent, "result_" + System.IO.Path.GetFileName(image_path));
+            var fullname = System.IO.Path.GetFullPath(pathToSave);
             ploted.Save(pathToSave);
             var resize = get_size(ploted.Width, ploted.Height);
             ploted.Mutate(x => x.Resize(resize.Width, resize.Height));
@@ -239,8 +176,8 @@ namespace GUI_YOLOv8
 
             var ploted = result.PlotImage(origin);
             string path_save_parent = Directory.GetParent(image_path).FullName;
-            var pathToSave = Path.Combine(path_save_parent, "result_" + Path.GetFileName(image_path));
-            var fullname = Path.GetFullPath(pathToSave);
+            var pathToSave = System.IO.Path.Combine(path_save_parent, "result_" + System.IO.Path.GetFileName(image_path));
+            var fullname = System.IO.Path.GetFullPath(pathToSave);
             ploted.Save(pathToSave);
             var resize = get_size(ploted.Width, ploted.Height);
             ploted.Mutate(x => x.Resize(resize.Width, resize.Height));
@@ -272,62 +209,6 @@ namespace GUI_YOLOv8
             return ploted;
 
         }
-        //private SixLabors.ImageSharp.Image detect(YoloV8 predictor_dect, SixLabors.ImageSharp.Image image)
-        //{
-
-        //    Console.WriteLine();
-        //    Console.WriteLine("================ DETECT DEMO ================");
-        //    Console.WriteLine();
-
-        //    Console.WriteLine("Loading model...");
-        //    var result = predictor_dect.Detect(image);
-
-        //    Console.WriteLine();
-
-        //    Console.WriteLine($"Result: {result}");
-        //    Console.WriteLine($"Speed: {result.Speed}");
-
-        //    Console.WriteLine();
-
-        //    Console.WriteLine("Plotting and saving...");
-
-
-        //    var ploted = result.PlotImage(image);
-
-        //    var resize = get_size(ploted.Width, ploted.Height);
-        //    ploted.Mutate(x => x.Resize(resize.Width, resize.Height));
-
-        //    return ploted;
-
-        //}
-        private SixLabors.ImageSharp.Image segment(YoloV8 predictor_seg, SixLabors.ImageSharp.Image image)
-        {
-
-            Console.WriteLine();
-            Console.WriteLine("================ DETECT DEMO ================");
-            Console.WriteLine();
-
-            Console.WriteLine("Loading model...");
-            var result = predictor_seg.Segment(image);
-
-            Console.WriteLine();
-
-            Console.WriteLine($"Result: {result}");
-            Console.WriteLine($"Speed: {result.Speed}");
-
-            Console.WriteLine();
-
-            Console.WriteLine("Plotting and saving...");
-
-
-            var ploted = result.PlotImage(image);
-
-            var resize = get_size(ploted.Width, ploted.Height);
-            ploted.Mutate(x => x.Resize(resize.Width, resize.Height));
-
-            return ploted;
-
-        }
         private ISegmentationResult segment(YoloV8 predictor_seg, byte[] image)
         {
 
@@ -338,50 +219,6 @@ namespace GUI_YOLOv8
             Console.WriteLine("Loading model...");
             var result = predictor_seg.Segment(image);
             return result;
-            //Console.WriteLine();
-
-            //Console.WriteLine($"Result: {result}");
-            //Console.WriteLine($"Speed: {result.Speed}");
-
-            //Console.WriteLine();
-
-            //Console.WriteLine("Plotting and saving...");
-
-
-            //var ploted = result.PlotImage(image);
-
-            //var resize = get_size(ploted.Width, ploted.Height);
-            //ploted.Mutate(x => x.Resize(resize.Width, resize.Height));
-
-            //return ploted;
-
-        }
-        private SixLabors.ImageSharp.Image pose(YoloV8 predictor_pose, SixLabors.ImageSharp.Image image)
-        {
-
-            Console.WriteLine();
-            Console.WriteLine("================ DETECT DEMO ================");
-            Console.WriteLine();
-
-            Console.WriteLine("Loading model...");
-            var result = predictor_pose.Pose(image);
-
-            Console.WriteLine();
-
-            Console.WriteLine($"Result: {result}");
-            Console.WriteLine($"Speed: {result.Speed}");
-
-            Console.WriteLine();
-
-            Console.WriteLine("Plotting and saving...");
-
-
-            var ploted = result.PlotImage(image);
-
-            var resize = get_size(ploted.Width, ploted.Height);
-            ploted.Mutate(x => x.Resize(resize.Width, resize.Height));
-
-            return ploted;
 
         }
         private IPoseResult pose(YoloV8 predictor_pose, byte[] image)
@@ -394,22 +231,6 @@ namespace GUI_YOLOv8
             Console.WriteLine("Loading model...");
             var result = predictor_pose.Pose(image);
             return result;
-            //Console.WriteLine();
-
-            //Console.WriteLine($"Result: {result}");
-            //Console.WriteLine($"Speed: {result.Speed}");
-
-            //Console.WriteLine();
-
-            //Console.WriteLine("Plotting and saving...");
-
-
-            //var ploted = result.PlotImage(image);
-
-            //var resize = get_size(ploted.Width, ploted.Height);
-            //ploted.Mutate(x => x.Resize(resize.Width, resize.Height));
-
-            //return ploted;
 
         }
         private IDetectionResult detect(YoloV8 predictor_dect, SixLabors.ImageSharp.Image image)
@@ -468,8 +289,8 @@ namespace GUI_YOLOv8
 
             var ploted = result.PlotImage(origin);
             string path_save_parent = Directory.GetParent(image_path).FullName;
-            var pathToSave = Path.Combine(path_save_parent, "result_" + Path.GetFileName(image_path));
-            var fullname = Path.GetFullPath(pathToSave);
+            var pathToSave = System.IO.Path.Combine(path_save_parent, "result_" + System.IO.Path.GetFileName(image_path));
+            var fullname = System.IO.Path.GetFullPath(pathToSave);
             ploted.Save(pathToSave);
             var resize = get_size(ploted.Width, ploted.Height);
             ploted.Mutate(x => x.Resize(resize.Width, resize.Height));
@@ -503,8 +324,8 @@ namespace GUI_YOLOv8
 
             var ploted = result.PlotImage(origin);
             string path_save_parent = Directory.GetParent(image_path).FullName;
-            var pathToSave = Path.Combine(path_save_parent, "result_" + Path.GetFileName(image_path));
-            var fullname = Path.GetFullPath(pathToSave);
+            var pathToSave = System.IO.Path.Combine(path_save_parent, "result_" + System.IO.Path.GetFileName(image_path));
+            var fullname = System.IO.Path.GetFullPath(pathToSave);
             ploted.Save(pathToSave);
             var resize = get_size(origin.Width, origin.Height);
             ploted.Mutate(x => x.Resize(resize.Width, resize.Height));
@@ -512,66 +333,6 @@ namespace GUI_YOLOv8
             origin.Dispose(); ploted.Dispose();
             Console.WriteLine();
         }
-        private SixLabors.ImageSharp.Image pose(string model_path, SixLabors.ImageSharp.Image image)
-        {
-
-            Console.WriteLine();
-            Console.WriteLine("================ POSE DEMO ================");
-            Console.WriteLine();
-
-            Console.WriteLine("Loading model...");
-            var predictor = new YoloV8(model_path);
-            var result = predictor.Pose(image);
-            predictor.Dispose();
-
-            Console.WriteLine();
-
-            Console.WriteLine($"Result: {result}");
-            Console.WriteLine($"Speed: {result.Speed}");
-
-            Console.WriteLine();
-
-            Console.WriteLine("Plotting and saving...");
-            var ploted = result.PlotImage(image);
-
-            var resize = get_size(image.Width, image.Height);
-            ploted.Mutate(x => x.Resize(resize.Width, resize.Height));
-            image.Dispose();
-            return ploted;
-        }
-        //private SixLabors.ImageSharp.Image segment(string model_path, SixLabors.ImageSharp.Image image)
-        //{
-
-        //    Console.WriteLine();
-        //    Console.WriteLine("================ POSE DEMO ================");
-        //    Console.WriteLine();
-
-        //    Console.WriteLine("Loading model...");
-        //    var predictor = new YoloV8(model_path);
-
-        //    //Console.WriteLine("Working... ({0})", image_path);
-        //    var result = predictor.Segment(image);
-        //    predictor.Dispose();
-
-        //    Console.WriteLine();
-
-        //    Console.WriteLine($"Result: {result}");
-        //    Console.WriteLine($"Speed: {result.Speed}");
-
-        //    Console.WriteLine();
-
-        //    Console.WriteLine("Plotting and saving...");
-        //    //var origin = SixLabors.ImageSharp.Image.Load(image_path);
-
-        //    var ploted = result.PlotImage(image);
-
-        //    var resize = get_size(image.Width, image.Height);
-        //    ploted.Mutate(x => x.Resize(resize.Width, resize.Height));
-        //    //pictureBox2.Image = ImageSharpToBitmap(ploted);
-        //    image.Dispose(); //ploted.Dispose();
-        //    Console.WriteLine();
-        //    return ploted;
-        //}
         public static Bitmap ImageSharpToBitmap(SixLabors.ImageSharp.Image image)
         {
             if(image == null) return new Bitmap(0,0);
@@ -691,8 +452,145 @@ namespace GUI_YOLOv8
         static YoloV8 predictor_dect = new YoloV8(@"C:\Code\yolov8onnxNetFramework\Yolov8_NetFW\Yolov8_NetFW\models\yolov8s.onnx");
         static YoloV8 predictor_pose = new YoloV8(@"C:\Code\yolov8onnxNetFramework\Yolov8_NetFW\Yolov8_NetFW\models\yolov8s-pose.onnx");
         static YoloV8 predictor_seg = new YoloV8(@"C:\Code\yolov8onnxNetFramework\Yolov8_NetFW\Yolov8_NetFW\models\yolov8s-seg.onnx");
+        public static Image<Bgr, Byte> Overlay(Image<Bgr, Byte> target, Image<Bgr, Byte> overlay, System.Drawing.Point start_point) {
 
-        private async void ts_video_play_Click(object sender, EventArgs e)
+            Bitmap bmp = target.AsBitmap();
+            Graphics gra = Graphics.FromImage(bmp);
+            gra.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
+            gra.DrawImage(overlay.AsBitmap(), start_point);
+            return target;
+        }
+        public static Image<Bgr, Byte> PosePlotImage(IPoseResult result, Image<Bgr, Byte> originImage, PosePlottingOptions options)
+        {
+            //var process = originImage.Load(true);
+
+            //EnsureSize(process.Size(), result.Image);
+
+            var size = result.Image;
+
+            var ratio = Math.Max(size.Width, size.Height) / 640F;
+
+            //var textOptions = new TextOptions(options.FontFamily.CreateFont(options.FontSize * ratio));
+
+            //var textPadding = options.TextHorizontalPadding * ratio;
+
+            //var boxBorderThickness = options.BoxBorderThickness * ratio;
+
+            var radius = options.KeypointRadius * ratio;
+            //var lineThickness = options.KeypointLineThickness * ratio;
+
+            foreach (var box in result.Boxes)
+            {
+                var label = $"{box.Class.Name} {box.Confidence:N}";
+                var rect = new System.Drawing.Rectangle(box.Bounds.X, box.Bounds.Y, box.Bounds.Width, box.Bounds.Height);
+                CvInvoke.Rectangle(originImage, rect, new MCvScalar(0, 0, 255),2, Emgu.CV.CvEnum.LineType.Filled);
+                CvInvoke.PutText(originImage, label, new System.Drawing.Point(box.Bounds.X, box.Bounds.Y), Emgu.CV.CvEnum.FontFace.HersheySimplex, 1, new MCvScalar(0, 0, 255), 2);
+                // Draw lines
+                for (int i = 0; i < options.Skeleton.Connections.Count; i++)
+                {
+                    var connection = options.Skeleton.Connections[i];
+
+                    IKeypoint first = box.Keypoints[connection.First];
+                    IKeypoint second = box.Keypoints[connection.Second];
+
+                    if (first.Confidence < options.KeypointConfidence || second.Confidence < options.KeypointConfidence)
+                        continue;
+
+                    var points = new SixLabors.ImageSharp.PointF[]
+                    {
+                    first.Point,
+                    second.Point,
+                    };
+                    
+                    var point1 = new System.Drawing.Point(Int32.Parse((points[0].X.ToString())), Int32.Parse((points[0].Y.ToString())));
+                    var point2 = new System.Drawing.Point(Int32.Parse((points[1].X.ToString())), Int32.Parse((points[1].Y.ToString())));
+
+                    CvInvoke.Line(originImage,point1,point2,new MCvScalar(255,0,0) ,2);
+
+                }
+                // Draw keypoints
+                for (int i = 0; i < box.Keypoints.Count; i++)
+                {
+                    var keypoint = box.Keypoints[i];
+
+                    if (keypoint.Confidence < options.KeypointConfidence)
+                        continue;
+
+                    //var ellipse = new EllipsePolygon(keypoint.Point, radius);
+
+                    //var keypointColor = options.Skeleton.GetKeypointColor(keypoint.Index);
+
+                    var size_ellipe = new System.Drawing.SizeF(Int32.Parse((radius.ToString())), Int32.Parse((radius.ToString())));
+                    var center_point = new System.Drawing.PointF(keypoint.Point.X, keypoint.Point.Y);
+                    //CvInvoke.Ellipse(originImage, center_point, size_ellipe,angle:180.0, color: new MCvScalar(0, 0, 255), thickness: -1);
+                    CvInvoke.Ellipse(originImage,new RotatedRect(center_point, size_ellipe,180),new MCvScalar(0,0,255),thickness:-1);
+                }
+                originImage.Save("lines_ellipe.jpg");
+            }
+            return originImage;
+        }
+        private Image<Bgr, byte> SegmentPlotImage(ISegmentationResult result,Image<Bgr, byte>originImage)
+        {
+            //process.Save("CopyBlank.jpg");
+            foreach (var box in result.Boxes)
+            {
+                Image<Bgr, byte> maskMat = new Image<Bgr, byte>(box.Mask.Width, box.Mask.Height);
+                for (int x = 0; x < box.Mask.Width; x++)
+                {
+                    for (int y = 0; y < box.Mask.Height; y++)
+                    {
+                        var value = box.Mask[x, y];
+                        if (value > .5F)
+                        {
+                            maskMat.Data[y, x, 0] = 255;//b
+                            maskMat.Data[y, x, 1] = 0;  //g
+                            maskMat.Data[y, x, 2] = 0;  //r
+                        }
+
+                    }
+                }
+                // Resize the mask if needed
+                if (box.Bounds.Width != box.Mask.Width || box.Bounds.Height != box.Mask.Height)
+                {
+                    CvInvoke.Resize(maskMat, maskMat, new System.Drawing.Size(box.Bounds.Width, box.Bounds.Height));
+                }
+                // c2 draw mask to image
+                Mat transparentMask = new Mat(originImage.Size, DepthType.Cv8U, 3);
+                transparentMask.SetTo(new MCvScalar(0, 0, 0));
+
+                Mat mat = new Mat();
+                VectorOfVectorOfPoint findcontours = new VectorOfVectorOfPoint();
+                CvInvoke.FindContours(maskMat.Convert<Gray, Byte>(), findcontours, mat, Emgu.CV.CvEnum.RetrType.External, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
+                CvInvoke.FillPoly(transparentMask, findcontours, new MCvScalar(255, 0, 0), offset: new System.Drawing.Point(box.Bounds.X, box.Bounds.Y));
+                CvInvoke.AddWeighted(originImage, 1, transparentMask, 0.5, 0, originImage);// transparent mask
+                //originImage.Save("AddWeighted.jpg");
+                //mask.Save("ThresholdBinary.jpg");
+                //process.Save("test_findcontours.jpg");
+                //CvInvoke.FillPoly(process, findcontours, new MCvScalar(255, 0, 0), offset:new System.Drawing.Point(box.Bounds.X, box.Bounds.Y));
+                // c1 draw mask to image
+                //var mask = maskMat.Convert<Gray, Byte>().SmoothGaussian(3).ThresholdBinary(new Gray(20),new Gray(255)).Erode(1);// find mask 
+                //var rect = new System.Drawing.Rectangle(box.Bounds.X, box.Bounds.Y, box.Bounds.Width, box.Bounds.Height);
+                //process.Save("test_findcontours.jpg");
+                //process.ROI = rect;
+                //process.SetValue(new Bgr(255, 0, 0), mask);// set color blue with mask to process
+                //maskMat.SetValue(new Bgr(0, 0, 0), mask.Not());
+                //process._Or(maskMat);
+                //process.ROI = System.Drawing.Rectangle.Empty;
+
+                // Draw bounding box
+                CvInvoke.Rectangle(originImage, new System.Drawing.Rectangle(box.Bounds.X, box.Bounds.Y, box.Bounds.Width, box.Bounds.Height), new MCvScalar(0, 0, 255), 2);
+
+                // Draw label
+                var label = $"{box.Class.Name} {box.Confidence:N}";
+                CvInvoke.PutText(originImage, label, new System.Drawing.Point(box.Bounds.Left, box.Bounds.Top), FontFace.HersheySimplex, 1, new MCvScalar(0, 0, 255), 2);
+                //process.Save("process.jpg");
+                transparentMask.Dispose();
+            }
+
+            return originImage;
+        }
+
+        private async void btn_play_Click(object sender, EventArgs e)
         {
             if (capture == null)
             {
@@ -701,110 +599,62 @@ namespace GUI_YOLOv8
 
             try
             {
-                //var model_path = @"C:\Code\yolov8onnxNetFramework\Yolov8_NetFW\Yolov8_NetFW\models\yolov8s.onnx";
-                string video_save_path = Path.Combine(Directory.GetParent(file_choose).ToString(), Path.GetFileNameWithoutExtension(file_choose) + "rs.mp4");
-                VideoWriter videoWriter = new VideoWriter(video_save_path,25,new System.Drawing.Size(capture.Width,capture.Height),true);
+                if (pause) pause = !pause;// set false to play video after press pause button
+                string video_save_path = System.IO.Path.Combine(Directory.GetParent(file_choose).ToString(), System.IO.Path.GetFileNameWithoutExtension(file_choose) + "rs.mp4");
+                VideoWriter videoWriter = new VideoWriter(video_save_path, 25, new System.Drawing.Size(capture.Width, capture.Height), true);
                 while (!pause)
                 {
                     Mat m = new Mat();
                     Mat m_clone = new Mat();
-                    //var m_clone;
                     capture.Read(m);
                     m.CopyTo(m_clone);
-                    
+
                     var resize = get_size(m.Width, m.Height);
-                    //Image<Bgr,Byte> img_org = capture.QueryFrame().ToImage<Bgr,Byte>();
 
                     if (!m.IsEmpty)
                     {
-                        SixLabors.ImageSharp.Image rs_img;
-                        //CvInvoke.Resize(img_org,img_org,resize);
-                        //var bitmap = m.ToBitmap();
                         var imagedatabytes = ImageToByte(m.ToBitmap());
-                        //// sua ham detect argument is image and return image de load len tren picture box
-                        var new_img = SixLabors.ImageSharp.Image.Load(imagedatabytes);
                         if (rb_dt.Checked)
                         {
-                            //string model_path = @"C:\Code\yolov8onnxNetFramework\Yolov8_NetFW\Yolov8_NetFW\models\yolov8s.onnx";
-                            //rs_img = detect(model_path,new_img);
-                            //rs_img = detect(predictor_dect, new_img);
-                            //var boxes = detect(predictor_dect, new_img);
                             var boxes = detect(predictor_dect, imagedatabytes);
-
                             foreach (var box in boxes.Boxes)
                             {
+                                var label = $"{box.Class.Name} {box.Confidence:N}";
                                 var rect = new System.Drawing.Rectangle();
                                 rect.X = box.Bounds.X; rect.Y = box.Bounds.Y;
                                 rect.Width = box.Bounds.Width; rect.Height = box.Bounds.Height;
                                 CvInvoke.Rectangle(m, rect, new MCvScalar(0, 0, 255), 2, Emgu.CV.CvEnum.LineType.Filled);
-                                CvInvoke.PutText(m, box.Class.Name, new System.Drawing.Point(rect.X, rect.Y), Emgu.CV.CvEnum.FontFace.HersheySimplex, 1, new MCvScalar(0, 0, 255), 2);
+                                CvInvoke.PutText(m,label, new System.Drawing.Point(rect.X, rect.Y), Emgu.CV.CvEnum.FontFace.HersheySimplex, 1, new MCvScalar(0, 0, 255), 2);
                                 //m.Save("save.jpg");
                             }
                             videoWriter.Write(m);
                             CvInvoke.Resize(m, m, resize);
                             pictureBox2.Image = m.ToBitmap();//ImageSharpToBitmap(rs_img);
-                           // rs_img.Dispose();
+                                                             // rs_img.Dispose();
                         }
                         else if (rb_sm.Checked)
                         {
-                            //string model_path = @"C:\Code\yolov8onnxNetFramework\Yolov8_NetFW\Yolov8_NetFW\models\yolov8s-seg.onnx";
-                            rs_img = segment(predictor_seg, new_img);
-                            //Image<Bgr, byte> process = m.ConvertTo(;
-                            //var seg_results = segment(predictor_seg, imagedatabytes);
-                            //Image<Bgr, byte> process = m.ToImage<Bgr, Byte>().CopyBlank();
-                            //foreach (var box in seg_results.Boxes)
-                            //{
-                            //    Mat maskMat = new Mat(box.Mask.Height, box.Mask.Width, DepthType.Cv8U, 1);
-                            //    //Image<Gray, byte> maskMat = new Image<Gray, byte>(box.Mask.Width, box.Mask.Height);
-
-                            //    for (int x = 0; x < box.Mask.Width; x++)
-                            //    {
-                            //        for (int y = 0; y < box.Mask.Height; y++)
-                            //        {
-                            //            var value = box.Mask[x, y];
-                            //            maskMat.SetTo(new MCvScalar(value > .5F ? 255 : 0), null);
-
-                            //        }
-                            //    }
-                            //    maskMat.Save("mask.jpg");
-                            //    // Resize the mask if needed
-                            //    if (box.Bounds.Width != box.Mask.Width || box.Bounds.Height != box.Mask.Height)
-                            //    {
-                            //        CvInvoke.Resize(maskMat, maskMat, new System.Drawing.Size(box.Bounds.Width, box.Bounds.Height));
-                            //    }
-                            //    // Convert the mask to Bgr format for overlay
-                            //    //Mat maskBgrMat = new Mat(new System.Drawing.Size(box.Mask.Height, box.Mask.Width),DepthType.Cv8U,3);
-                            //    //CvInvoke.CvtColor(maskMat, maskBgrMat, ColorConversion.Gray2Bgr);
-
-                            //    // Overlay the mask onto the original image
-                            //    //Mat overlayMat = new Mat();
-                            //    //CvInvoke.AddWeighted(m, 1, maskBgrMat, 0.4, 0, overlayMat);
-                            //    // Overlay the mask onto the original image
-                            //    //Mat overlayMat = new Mat();
-                            //    //process.SetValue(new Bgr(0,0,255),maskMat);
-                            //    //CvInvoke.AddWeighted(process.Mat, 1, maskBgrMat, 0.4, 0, overlayMat);
-
-                            //    //process = overlayMat.ToImage<Bgr, byte>();
-                            //    //m = overlayMat;
-
-                            //    // Draw bounding box
-                            //    CvInvoke.Rectangle(process, new System.Drawing.Rectangle(box.Bounds.X, box.Bounds.Y, box.Bounds.Width, box.Bounds.Height), new MCvScalar(0, 0, 255), 2);
-
-                            //    // Draw label
-                            //    var label = $"{box.Class.Name} {box.Confidence:N}";
-                            //    CvInvoke.PutText(process, label, new System.Drawing.Point(box.Bounds.Left, box.Bounds.Top), FontFace.HersheySimplex, 1, new MCvScalar(0, 0, 255), 2);
-                            //}
-                            //pictureBox2.Image = m.ToBitmap();//ImageSharpToBitmap(rs_img);
-                            //rs_img.Dispose();
+                            var seg_results = segment(predictor_seg, imagedatabytes);
+                            Image<Bgr, byte> plot_image = SegmentPlotImage(seg_results, m.ToImage<Bgr, byte>());
+                            videoWriter.Write(plot_image);
+                            Image<Bgr, byte> result_img = new Image<Bgr, byte>(resize.Width, resize.Height);
+                            CvInvoke.Resize(plot_image, result_img, resize);
+                            pictureBox2.Image = result_img.ToBitmap();//ImageSharpToBitmap(rs_img);
+                            plot_image.Dispose();
+                            result_img.Dispose();
 
                         }
                         else if (rb_pose.Checked)
                         {
-                            //string model_path = @"C:\Code\yolov8onnxNetFramework\Yolov8_NetFW\Yolov8_NetFW\models\yolov8s-pose.onnx";
-                            //rs_img = pose(model_path, new_img);
                             var pose_results = pose(predictor_pose, imagedatabytes);
-                            //pictureBox2.Image = ImageSharpToBitmap(rs_img);
-                            //rs_img.Dispose();
+                            var pose_option = new PosePlottingOptions();
+                            var plot_image = PosePlotImage(pose_results, m.ToImage<Bgr, byte>(), pose_option);
+                            videoWriter.Write(plot_image);
+                            Image<Bgr, byte> result_img = new Image<Bgr, byte>(resize.Width, resize.Height);
+                            CvInvoke.Resize(plot_image, result_img, resize);
+                            pictureBox2.Image = result_img.ToBitmap();//ImageSharpToBitmap(rs_img);
+                            result_img.Dispose();
+                            plot_image.Dispose();
 
                         }
                         else
@@ -815,7 +665,6 @@ namespace GUI_YOLOv8
                         //var rs_img = detect(model_path, new_img);
                         CvInvoke.Resize(m_clone, m_clone, resize);
                         pictureBox1.Image = m_clone.ToBitmap();
-                        //bitmap.Dispose();
                         m_clone.Dispose();
                         m.Dispose();
                         //new_img.Dispose();
@@ -832,9 +681,14 @@ namespace GUI_YOLOv8
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message );
+                Console.WriteLine(ex.Message);
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private void btn_pause_Click(object sender, EventArgs e)
+        {
+            pause = !pause;
         }
     }
 }
