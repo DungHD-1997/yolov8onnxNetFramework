@@ -43,6 +43,9 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btn_play = new System.Windows.Forms.Button();
             this.btn_pause = new System.Windows.Forms.Button();
+            this.playToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pauseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.stopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.mode.SuspendLayout();
@@ -141,7 +144,7 @@
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(7, 2, 0, 2);
-            this.menuStrip1.Size = new System.Drawing.Size(3048, 54);
+            this.menuStrip1.Size = new System.Drawing.Size(2032, 36);
             this.menuStrip1.TabIndex = 5;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -152,7 +155,7 @@
             this.ts_video,
             this.cameraToolStripMenuItem});
             this.fileToolStripMenuItem1.Name = "fileToolStripMenuItem1";
-            this.fileToolStripMenuItem1.Size = new System.Drawing.Size(54, 50);
+            this.fileToolStripMenuItem1.Size = new System.Drawing.Size(54, 32);
             this.fileToolStripMenuItem1.Text = "File";
             // 
             // ts_image
@@ -171,6 +174,10 @@
             // 
             // cameraToolStripMenuItem
             // 
+            this.cameraToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.playToolStripMenuItem,
+            this.pauseToolStripMenuItem,
+            this.stopToolStripMenuItem});
             this.cameraToolStripMenuItem.Name = "cameraToolStripMenuItem";
             this.cameraToolStripMenuItem.Size = new System.Drawing.Size(270, 34);
             this.cameraToolStripMenuItem.Text = "Camera";
@@ -205,6 +212,27 @@
             this.btn_pause.Text = "Pause";
             this.btn_pause.UseVisualStyleBackColor = true;
             this.btn_pause.Click += new System.EventHandler(this.btn_pause_Click);
+            // 
+            // playToolStripMenuItem
+            // 
+            this.playToolStripMenuItem.Name = "playToolStripMenuItem";
+            this.playToolStripMenuItem.Size = new System.Drawing.Size(270, 34);
+            this.playToolStripMenuItem.Text = "Play";
+            this.playToolStripMenuItem.Click += new System.EventHandler(this.playToolStripMenuItem_Click);
+            // 
+            // pauseToolStripMenuItem
+            // 
+            this.pauseToolStripMenuItem.Name = "pauseToolStripMenuItem";
+            this.pauseToolStripMenuItem.Size = new System.Drawing.Size(270, 34);
+            this.pauseToolStripMenuItem.Text = "Pause";
+            this.pauseToolStripMenuItem.Click += new System.EventHandler(this.pauseToolStripMenuItem_Click);
+            // 
+            // stopToolStripMenuItem
+            // 
+            this.stopToolStripMenuItem.Name = "stopToolStripMenuItem";
+            this.stopToolStripMenuItem.Size = new System.Drawing.Size(270, 34);
+            this.stopToolStripMenuItem.Text = "Stop";
+            this.stopToolStripMenuItem.Click += new System.EventHandler(this.stopToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -247,6 +275,9 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button btn_pause;
         private System.Windows.Forms.Button btn_play;
+        private System.Windows.Forms.ToolStripMenuItem playToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pauseToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem stopToolStripMenuItem;
     }
 }
 

@@ -32,6 +32,7 @@ using SixLabors.Fonts;
 using SixLabors.ImageSharp.Drawing;
 using SixLabors.ImageSharp.PixelFormats;
 using Yolov8_NetFW.Selectors;
+using System.Threading;
 //using Microsoft.ML.OnnxRuntime.Tensors;
 
 namespace GUI_YOLOv8
@@ -60,7 +61,20 @@ namespace GUI_YOLOv8
         {
 
         }
-
+        private void Capture_ImageGrabbed(object sender, EventArgs e)
+        {
+            try
+            {
+                Mat m = new Mat();
+                capture.Retrieve(m);
+                pictureBox1.Image = m.ToImage<Bgr, byte>().ToBitmap();
+                Thread.Sleep(1);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.InnerException.Message);
+            }
+        }
         private void fileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
@@ -531,7 +545,6 @@ namespace GUI_YOLOv8
         }
         private Image<Bgr, byte> SegmentPlotImage(ISegmentationResult result,Image<Bgr, byte>originImage)
         {
-            //process.Save("CopyBlank.jpg");
             foreach (var box in result.Boxes)
             {
                 Image<Bgr, byte> maskMat = new Image<Bgr, byte>(box.Mask.Width, box.Mask.Height);
@@ -689,6 +702,32 @@ namespace GUI_YOLOv8
         private void btn_pause_Click(object sender, EventArgs e)
         {
             pause = !pause;
+        }
+
+        private void playToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (capture == null)
+            {
+                capture = new VideoCapture(0);
+            }
+            capture.ImageGrabbed += Capture_ImageGrabbed;
+            capture.Start();
+        }
+
+        private void pauseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (capture != null)
+            {
+                capture.Pause();
+            }
+        }
+
+        private void stopToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (capture != null)
+            {
+                capture.Dispose();
+            }
         }
     }
 }
