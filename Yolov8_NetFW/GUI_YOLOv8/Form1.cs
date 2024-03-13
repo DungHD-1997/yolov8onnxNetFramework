@@ -67,8 +67,62 @@ namespace GUI_YOLOv8
             {
                 Mat m = new Mat();
                 capture.Retrieve(m);
-                pictureBox1.Image = m.ToImage<Bgr, byte>().ToBitmap();
-                Thread.Sleep(1);
+                var m_clone = m.Clone();
+                var resize = get_size(m.Width, m.Height);
+                var image_bytes = ImageToByte(m.ToBitmap());
+                if (rb_dt.Checked)
+                {
+                    var boxes = detect(predictor_dect, image_bytes);
+                    foreach (var box in boxes.Boxes)
+                    {
+                        var label = $"{box.Class.Name} {box.Confidence:N}";
+                        var rect = new System.Drawing.Rectangle();
+                        rect.X = box.Bounds.X; rect.Y = box.Bounds.Y;
+                        rect.Width = box.Bounds.Width; rect.Height = box.Bounds.Height;
+                        CvInvoke.Rectangle(m, rect, new MCvScalar(0, 0, 255), 2, Emgu.CV.CvEnum.LineType.Filled);
+                        CvInvoke.PutText(m, label, new System.Drawing.Point(rect.X, rect.Y), Emgu.CV.CvEnum.FontFace.HersheySimplex, 1, new MCvScalar(0, 0, 255), 2);
+                        //m.Save("save.jpg");
+                    }
+                    CvInvoke.Resize(m, m, resize);
+                    pictureBox2.Image = m.ToBitmap();//ImageSharpToBitmap(rs_img);
+                                                     // rs_img.Dispose();
+                }
+                else if (rb_sm.Checked)
+                {
+                    var seg_results = segment(predictor_seg, image_bytes);
+                    Image<Bgr, byte> plot_image = SegmentPlotImage(seg_results, m.ToImage<Bgr, byte>());
+                    Image<Bgr, byte> result_img = new Image<Bgr, byte>(resize.Width, resize.Height);
+                    CvInvoke.Resize(plot_image, result_img, resize);
+                    pictureBox2.Image = result_img.ToBitmap();//ImageSharpToBitmap(rs_img);
+                    plot_image.Dispose();
+                    result_img.Dispose();
+
+                }
+                else if (rb_pose.Checked)
+                {
+                    var pose_results = pose(predictor_pose, image_bytes);
+                    var pose_option = new PosePlottingOptions();
+                    var plot_image = PosePlotImage(pose_results, m.ToImage<Bgr, byte>(), pose_option);
+                    Image<Bgr, byte> result_img = new Image<Bgr, byte>(resize.Width, resize.Height);
+                    CvInvoke.Resize(plot_image, result_img, resize);
+                    pictureBox2.Image = result_img.ToBitmap();//ImageSharpToBitmap(rs_img);
+                    result_img.Dispose();
+                    plot_image.Dispose();
+
+                }
+
+                else
+                {
+                    MessageBox.Show("Please choose mode Detect or Segment or Pose!");
+                    return;
+                }
+                
+                CvInvoke.Resize(m_clone, m_clone, resize);
+
+                pictureBox1.Image = m_clone.ToBitmap();
+                m.Dispose();
+                m_clone.Dispose();
+                Thread.Sleep(5);
             }
             catch (Exception ex)
             {
